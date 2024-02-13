@@ -1637,7 +1637,18 @@ func flattenCloudRunServiceSpecTemplateMetadata(v interface{}, d *schema.Resourc
 	return []interface{}{transformed}
 }
 func flattenCloudRunServiceSpecTemplateMetadataLabels(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
-	return v
+	if v == nil {
+		return v
+	}
+
+	transformed := make(map[string]interface{})
+	if l, ok := d.GetOkExists("metadata.0.labels"); ok {
+		for k := range l.(map[string]interface{}) {
+			transformed[k] = v.(map[string]interface{})[k]
+		}
+	}
+
+	return transformed
 }
 
 func flattenCloudRunServiceSpecTemplateMetadataGeneration(v interface{}, d *schema.ResourceData, config *transport_tpg.Config) interface{} {
